@@ -1,6 +1,6 @@
 name: flutter_android_cert_sign
 description: flutter获取安卓包的证书签名
-version: 0.0.1+1
+version: 0.0.3+3
 homepage: https://github.com/515445681/flutter_android_cert_sign
 
 environment:
