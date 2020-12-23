@@ -12,6 +12,8 @@
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"getCertSign" isEqualToString:call.method]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+  }else   if ([@"getLibSoList" isEqualToString:call.method]) {
+   result([@"[]"]);
   } else {
     result(FlutterMethodNotImplemented);
   }

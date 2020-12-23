@@ -5,6 +5,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 
+import org.json.JSONArray;
+import org.json.JSONStringer;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -12,9 +15,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.JSONUtil;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -42,7 +47,14 @@ public class FlutterAndroidCertSignPlugin implements FlutterPlugin, MethodCallHa
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         if (call.method.equals("getCertSign")) {
             result.success(getCertificateSHA1Fingerprint());
-        } else {
+        }else if(call.method.equals("getLibSoList")) {
+            JSONArray jsonArray = new JSONArray();
+            Set<String> list =  Scan.findLibList();
+            for(String s : list){
+                jsonArray.put(s);
+            }
+            result.success(jsonArray.toString());
+        }else {
             result.notImplemented();
         }
     }
@@ -59,6 +71,9 @@ public class FlutterAndroidCertSignPlugin implements FlutterPlugin, MethodCallHa
      * @return
      */
     private String getCertificateSHA1Fingerprint() {
+        if (Scan.isHook(context)) {
+            return null;
+        }
         //获取包管理器
         PackageManager pm = context.getPackageManager();
 
@@ -79,8 +94,10 @@ public class FlutterAndroidCertSignPlugin implements FlutterPlugin, MethodCallHa
             return null;
         }
 
+
         //签名信息
         Signature[] signatures = packageInfo.signatures;
+
         byte[] cert = signatures[0].toByteArray();
 
         //将签名转换为字节数组流
@@ -111,7 +128,6 @@ public class FlutterAndroidCertSignPlugin implements FlutterPlugin, MethodCallHa
         try {
             //加密算法的类，这里的参数可以使 MD4,MD5 等加密算法
             MessageDigest md = MessageDigest.getInstance("SHA1");
-
             //获得公钥
             byte[] publicKey = md.digest(c.getEncoded());
 
