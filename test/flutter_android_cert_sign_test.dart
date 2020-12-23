@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await FlutterAndroidCertSign.platformVersion, '42');
+    expect(await FlutterAndroidCertSign.certSign, '42');
   });
 }
