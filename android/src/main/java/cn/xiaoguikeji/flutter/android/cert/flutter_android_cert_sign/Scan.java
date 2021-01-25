@@ -96,7 +96,7 @@ public class Scan {
         if(context.getApplicationContext().getClass()!= FlutterApplication.class){
             return true;
         }
-        if (findHookAppName(context) || findHookAppFile() || findHookStack()) {
+        if (findHookStack()) {
             return true;
         }
         return false;
